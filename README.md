@@ -25,14 +25,14 @@ The current state is described by a 2D set of state variables as follows:
 * epsi : Orientation Error
 
 The Kinematic model used is as follows (dt = deltaT, timestep):
-'''
+```
 x[t + 1] = x[t] + v[t] * cos(psi[t]) * dt;
 y[t + 1] = y[t] + v[t] * sin(psi[t]) * dt;
 psi[t + 1] = psi[t] + v[t] / Lf * delta[t] * dt;
 v[t + 1] = v[t] + a[t] * dt;
 cte[t + 1] = f(x[t]) - y[t] + v[t] * sin(epsi[t]) * dt;
 epsi[t + 1] = psi[t] - psiDes[t] + v[t] / Lf * dt * delta[t]
-'''
+```
 
 ## Cost Function
 So there are 7 components to influence the cost function and we were tasked with tuning the weights for each component to influence the behavior of the model.  The largest weights were the ones associated with the delta of subsequent actuator values and the steering actuator.  This smoothes out the actions and tries to implement a smooth ride without sharp turns or changes in speed.  We gave a reference velocity to compare the error of the velocity value which we weighted the lowest because of the implemented physics of the simulator and instead weighted the steering error and cte higher.
