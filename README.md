@@ -44,6 +44,6 @@ I chose N as 10 and dt as .1 for a total T of 1.  This was a kind of guess based
 The coordinates are pre-processed by transforming them to the vehicle's coordinate system with (0, 0) being the vehicles coordinate and the path coming from there.
 
 ## Latency
-Since my chosed timestep (dt) = .1 = 100 milliseconds then we can just the previous actuation instead of the current one in calcuting the predicted states.  This is done in MPC.cpp line #107
+Since there is a control input lag of a given 100ms according to the project simulator, it is desired to have a more accurate state of the vehicle when the actuall actuator inputs are executed.  To account for this in the model, the current state is run through the kinematic model to calculate a prediction of where the state will be after the given latency time.  This new prediction is then used as the current state when calculating the predicted trajectory.
 
 
