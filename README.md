@@ -35,7 +35,7 @@ epsi[t + 1] = psi[t] - psiDes[t] + v[t] / Lf * dt * delta[t]
 ```
 
 ## Cost Function
-So there are 7 components to influence the cost function and we were tasked with tuning the weights for each component to influence the behavior of the model.  The largest weights were the ones associated with the delta of subsequent actuator values and the steering actuator.  This smoothes out the actions and tries to implement a smooth ride without sharp turns or changes in speed.  We gave a reference velocity to compare the error of the velocity value which we weighted the lowest because of the implemented physics of the simulator and instead weighted the steering error and cte higher.
+There are 7 components to influence the cost function and we were tasked with tuning the weights for each component to influence the behavior of the model.  The largest weights were the ones associated with the delta of subsequent actuator values and the steering actuator.  This smoothes out the actions and tries to implement a smooth ride without sharp turns or changes in speed.  We gave a reference velocity to compare the error of the velocity value which we weighted the lowest because of the implemented physics of the simulator and instead weighted the steering error and cte higher.
 
 ## Time Steps
 I chose N as 10 and dt as .1 for a total T of 1.  This was a kind of guess based on the environment of the simulators general speeds and turns.  This actually affects the way that the vehicle behaves and influences the reference speed to reduce the error on.  This is because it is the path planned in seconds ahead of the car which can vary in speed
