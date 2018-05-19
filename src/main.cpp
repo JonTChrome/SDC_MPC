@@ -79,7 +79,7 @@ int main() {
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
     string sdata = string(data).substr(0, length);
-    cout << sdata << endl;
+//    cout << sdata << endl;
     if (sdata.size() > 2 && sdata[0] == '4' && sdata[1] == '2') {
       string s = hasData(sdata);
       if (s != "") {
@@ -93,6 +93,7 @@ int main() {
           double py = j[1]["y"];
           double psi = j[1]["psi"];
           double v = j[1]["speed"];
+            double a = j[1]["throttle"];
 
             // Need Eigen vectors for polyfit
             Eigen::VectorXd x_transf(ptsx.size());
@@ -109,14 +110,30 @@ int main() {
             
             auto coeffs = polyfit(x_transf, y_transf, 3);
             
-            double cte = polyeval(coeffs, 0);
             
+//            double cte = polyeval(coeffs, 0);
+            //Account for Latency
+            
+            //initial state is 0,0,0
+            //delay 100ms
+            double delay = 0.1;
+            double cte = polyeval(coeffs, 0);
             double epsi = -atan(coeffs[1]);
+            double delta = j[1]["steering_angle"];
+            v *= 0.44704;
+            psi = -delta;
+            delta *= -1;
+            
+            double x_delay = (v * cos(psi) * delay);
+            double y_delay = (v* sin(psi) * delay);
+            double cte_delay = cte + (v * sin(epsi) * delay);
+            double epsi_delay = epsi + (v * delta * delay/ Lf);
+            double psi_delay = psi + v * delta * delay / Lf;
+            double v_delay = v + a * delay;
         
             Eigen::VectorXd state(6);
-            state << 0, 0, 0, v, cte, epsi;
+            state << x_delay, y_delay, psi_delay, v_delay, cte_delay, epsi_delay;
             auto vars = mpc.Solve(state, coeffs);
-            
             
             json msgJson;
             // NOTE: Remember to divide by deg2rad(25) before you send the steering value back.
@@ -160,7 +177,7 @@ int main() {
 
 
           auto msg = "42[\"steer\"," + msgJson.dump() + "]";
-          std::cout << msg << std::endl;
+//          std::cout << msg << std::endl;
           // Latency
           // The purpose is to mimic real driving conditions where
           // the car does actuate the commands instantly.

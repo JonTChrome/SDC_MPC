@@ -22,17 +22,17 @@ size_t N = 10;
 
 
 //Reference values
-const double ref_v = 50;
+const double ref_v = 80;
 
 //WEIGHTS
 
-const double w_cte = 3000;
-const double w_epsi = 3000;
+const double w_cte = 500;
+const double w_epsi = 2000;
 const double w_v = 1;
-const double w_delta = 5;
-const double w_a = 5;
-const double w_delta_s = 1e7;
-const double w_a_s = 1e7;
+const double w_delta = 500000;
+const double w_a = 10;
+const double w_delta_s = 4e5;
+const double w_a_s = 1e8;
 
 //Start indices
 const double xstart = 0;
@@ -104,10 +104,7 @@ class FG_eval {
           AD<double> v1 = vars[v_start + t + 1];
           AD<double> cte1 = vars[cte_start + t + 1];
           AD<double> epsi1 = vars[epsi_start + t + 1];
-          if (t > 1) {
-              a0 = vars[a_start + t - 2];
-              delta0 = vars[delta_start + t - 2];
-          }
+
           AD<double> f0 = 0.0;
           for (int i = 0; i < coeffs.size(); i++) {
               f0 += coeffs[i] * CppAD::pow(x0, i);
@@ -117,7 +114,7 @@ class FG_eval {
 
           fg[2 + xstart + t] = x1 - (x0 + v0 * CppAD::cos(psi0) * dt);
           fg[2 + ystart + t] = y1 - (y0 + v0 * CppAD::sin(psi0) * dt);
-          fg[2 + psi_start + t] = psi1 - (psi0 + v0 / Lf * delta0 * dt);
+          fg[2 + psi_start + t] = psi1 - (psi0 + v0 * delta0 / Lf * dt);
           fg[2 + v_start + t] = v1 - (v0 + a0 * dt);
           fg[2 + cte_start + t] = cte1 - ((f0 - y0) + (v0 * CppAD::sin(epsi0) * dt));
           fg[2 + epsi_start + t] = epsi1 - ((psi0 - psides0) + v0 / Lf * delta0 * dt);
